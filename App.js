@@ -6,53 +6,33 @@
 
 import React, { Component } from 'react';
 import {
-  Platform,
-  StyleSheet,
   Text,
-  View
+  ToastAndroid
 } from 'react-native';
+import firebase from 'react-native-firebase';
 
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' +
-    'Cmd+D or shake for dev menu',
-  android: 'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
+export default class App extends Component {
+  state = {
+    loginStatus: 'Menunggu authentikasi'
+  }
 
-type Props = {};
-export default class App extends Component<Props> {
+  async componentDidMount() {
+    try {
+      var result = await firebase.auth().signInWithEmailAndPassword('udin123@gmail.com', '123456');
+      this.setState({
+        loginStatus: 'Berhasil'
+      });
+    } catch(e) {
+      ToastAndroid.show(e.toString(), ToastAndroid.SHORT);
+      this.setState({
+        loginStatus: 'Gagal'
+      });
+    }
+  }
+
   render() {
     return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit App.js
-        </Text>
-        <Text style={styles.instructions}>
-          {instructions}
-        </Text>
-      </View>
+      <Text>{this.state.loginStatus}</Text>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-});
